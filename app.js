@@ -16,6 +16,9 @@ const sentenceFrames = [
   (word) => `The word was ${word}.`,
   (word) => `Did you say ${word}?`,
 ];
+const phase12SentenceOverrides = new Map([
+  ["C06-05-b", "This book is thick."],
+]);
 const planets = [
   { name: "水星", en: "Mercury", slug: "mercury" },
   { name: "金星", en: "Venus", slug: "venus" },
@@ -380,14 +383,16 @@ function phase12AudioPath(pair, key, kind = "word") {
   return `audio/phase${phase}/${pair.categoryId}-${String(pair.number).padStart(2, "0")}-${key}-${kind}.wav`;
 }
 
-function sentenceForPair(pair, word) {
+function sentenceForPair(pair, key) {
+  const override = phase12SentenceOverrides.get(`${pair.categoryId}-${String(pair.number).padStart(2, "0")}-${key}`);
+  if (override) return override;
   const categoryNumber = Number(pair.categoryId.slice(1));
-  return sentenceFrames[(categoryNumber + pair.number) % sentenceFrames.length](word);
+  return sentenceFrames[(categoryNumber + pair.number) % sentenceFrames.length](pair[key].word);
 }
 
 function decorateQuestion(pair, promptType = "word") {
   const target = Math.random() < 0.5 ? "a" : "b";
-  const spokenText = promptType === "sentence" ? sentenceForPair(pair, pair[target].word) : pair[target].word;
+  const spokenText = promptType === "sentence" ? sentenceForPair(pair, target) : pair[target].word;
   return {
     ...pair,
     target,
@@ -741,7 +746,7 @@ function makeWeaknessQuestions() {
     if (!pair) return null;
     const question = decorateQuestion(pair, mistake.promptType || "word");
     question.target = pair.a.word === mistake.correctWord ? "a" : "b";
-    question.spokenText = question.promptType === "sentence" ? sentenceForPair(pair, pair[question.target].word) : pair[question.target].word;
+    question.spokenText = question.promptType === "sentence" ? sentenceForPair(pair, question.target) : pair[question.target].word;
     question.audioFile = phase12AudioPath(pair, question.target, question.promptType);
     return { ...question, assessmentPhase: categoryById(pair.categoryId)?.phase || 1, assessmentType: "phase12" };
   }).filter(Boolean);

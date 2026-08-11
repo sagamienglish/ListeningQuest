@@ -11,6 +11,9 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const voice = process.env.LISTENQUEST_VOICE || "Ava (Premium)";
 const rate = process.env.LISTENQUEST_RATE || "155";
 const categoryFilter = process.env.LISTENQUEST_CATEGORY || "";
+const pairNumberFilter = Number(process.env.LISTENQUEST_PAIR) || 0;
+const sideFilter = process.env.LISTENQUEST_SIDE || "";
+const kindFilter = process.env.LISTENQUEST_KIND || "";
 const overwriteExisting = process.env.LISTENQUEST_OVERWRITE === "1";
 const sentenceFrames = [
   (word) => `Please say ${word} again.`,
@@ -19,6 +22,9 @@ const sentenceFrames = [
   (word) => `The word was ${word}.`,
   (word) => `Did you say ${word}?`,
 ];
+const sentenceOverrides = new Map([
+  ["C06-05-b", "This book is thick."],
+]);
 
 function baseName(pair, key) {
   return `${pair.categoryId}-${String(pair.number).padStart(2, "0")}-${key}`;
@@ -29,7 +35,9 @@ function sentenceFrameIndex(pair) {
   return (categoryNumber + pair.number) % sentenceFrames.length;
 }
 
-function sentenceFor(pair, word) {
+function sentenceFor(pair, key, word) {
+  const override = sentenceOverrides.get(baseName(pair, key));
+  if (override) return override;
   return sentenceFrames[sentenceFrameIndex(pair)](word);
 }
 
@@ -59,14 +67,20 @@ try {
   const jobs = [];
   for (const pair of pairs) {
     if (categoryFilter && pair.categoryId !== categoryFilter) continue;
+    if (pairNumberFilter && pair.number !== pairNumberFilter) continue;
     const phase = categories.find((category) => category.id === pair.categoryId)?.phase;
     const outputDirectory = path.join(root, `audio/phase${phase}`);
     await fs.mkdir(outputDirectory, { recursive: true });
     for (const key of ["a", "b"]) {
+      if (sideFilter && key !== sideFilter) continue;
       const base = baseName(pair, key);
       const word = pair[key].word;
-      jobs.push({ text: word, output: path.join(outputDirectory, `${base}-word.wav`), overwrite: overwriteExisting });
-      jobs.push({ text: sentenceFor(pair, word), output: path.join(outputDirectory, `${base}-sentence.wav`), overwrite: overwriteExisting });
+      if (!kindFilter || kindFilter === "word") {
+        jobs.push({ text: word, output: path.join(outputDirectory, `${base}-word.wav`), overwrite: overwriteExisting });
+      }
+      if (!kindFilter || kindFilter === "sentence") {
+        jobs.push({ text: sentenceFor(pair, key, word), output: path.join(outputDirectory, `${base}-sentence.wav`), overwrite: overwriteExisting });
+      }
     }
   }
   let cursor = 0;
