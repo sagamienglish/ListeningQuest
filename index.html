@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#09090b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>ListeningQuest — 英語リスニングトレーニング</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <button class="brand" type="button" data-action="home" aria-label="ListeningQuest ホーム">
+        <span class="brand-mark" aria-hidden="true">LQ</span>
+        <span>ListeningQuest</span>
+      </button>
+      <nav class="header-nav" aria-label="メインナビゲーション">
+        <button class="nav-link is-active" type="button" data-action="home">トレーニング</button>
+        <button class="nav-link" type="button" data-action="about">使い方</button>
+      </nav>
+    </header>
+
+    <main id="app" tabindex="-1"></main>
+
+    <footer class="site-footer">
+      <span>ListeningQuest Prototype</span>
+      <span>General American · 17 categories · 170 pairs</span>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

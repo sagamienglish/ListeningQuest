@@ -1,0 +1,124 @@
+Create one master audio recording for an English listening-training application.
+
+VOICE AND DELIVERY — these instructions must not be spoken:
+- One adult native speaker of General American English.
+- Warm, clear, contemporary, and neutral. Sound like natural conversation, not a textbook word list.
+- Medium conversational pace, approximately 150-165 words per minute.
+- Read every sentence exactly once, in the exact order supplied.
+- Do not speak line numbers, category names, instructions, XML tags, or commentary.
+- Do not add, remove, paraphrase, repeat, or correct any sentence.
+- Keep the volume, microphone distance, voice identity, and speaking rate consistent across the entire recording.
+- After every sentence, insert approximately 2.0 seconds of clean digital silence. Do not fill the silence with breathing, music, room tone, or sound effects.
+- Begin with 1.0 second of silence and end with 2.0 seconds of silence.
+- Preserve natural connected speech. Do not over-enunciate word boundaries.
+
+CATEGORY-SPECIFIC PERFORMANCE — these instructions must not be spoken:
+Lines 1-10 (P301, 子音→母音リンキング): Use natural consonant-to-vowel linking across word boundaries. Do not insert pauses between the linked words.
+Lines 11-20 (P302, 母音→母音リンキング): Use natural /w/ or /j/ glide transitions between adjacent vowels where appropriate.
+Lines 21-30 (P303, 隣接子音の連結): For adjacent identical or similar consonants, hold and release the consonant naturally rather than producing two separate explosions.
+Lines 31-40 (P304, 弱形・シュワー): Use authentic conversational weak forms. Reduce him, her, his, them and function words such as to, for, of, at, from, and. Preserve grammatical meaning.
+Lines 41-50 (P305, 文の強弱・リズム): Use natural English stress timing. Stress the capitalized content words and compress unstressed function words without sounding theatrical.
+Lines 51-60 (P306, T・Dのフラップ): Use a natural General American flap [ɾ] for eligible intervocalic T or D sounds.
+Lines 61-70 (P307, 音の脱落): Use natural conversational consonant-cluster simplification and T/D deletion where appropriate, without deleting words.
+Lines 71-80 (P308, 同化・音の融合): Use natural assimilation and coalescence such as did you, would you, don't you, miss you, and place assimilation before bilabials.
+Lines 81-90 (P309, 頻出リダクション): Use common conversational reductions such as gonna, wanna, hafta, lemme, gimme, gotta, shoulda, coulda, whaddaya, and kinda, while keeping the written sentence unchanged in meaning.
+
+QUALITY CHECK — these instructions must not be spoken:
+- The result must contain exactly 90 spoken sentences.
+- There must be no introduction and no closing message.
+- If an instruction conflicts with natural General American pronunciation, prioritize natural connected speech while preserving every word.
+
+Read only the text inside <SPOKEN_TEXT>. Each newline marks a new sentence and requires the silent gap described above.
+
+<SPOKEN_TEXT>
+Pick it up before you leave.
+Turn it off when you finish.
+Take it out of the box.
+Put it on the table.
+Read it aloud for us.
+Send it over tonight.
+Leave it at the desk.
+Check it again tomorrow.
+Hold on a minute.
+Come in and sit down.
+Go out and get some air.
+Do it again for me.
+I agree with your idea.
+We asked for some help.
+See it for yourself.
+She always arrives early.
+Go over the details.
+Who is at the door?
+They are already here.
+Try it one more time.
+The big game starts tonight.
+We had two good days.
+Take care on the stairs.
+Keep practicing every day.
+The red door is open.
+Stop playing with that.
+A black cat crossed the road.
+This bus stop is crowded.
+She felt tired today.
+The top player scored again.
+Tell him about the meeting.
+I saw her at the station.
+That is his new car.
+Give them a few minutes.
+We are going to the store.
+This gift is for my sister.
+I need a cup of coffee.
+Meet me at the entrance.
+She came from the office.
+Bread and butter, please.
+The CHILD bought a NEW red BIKE.
+Please SEND me the FILE by FOUR.
+We NEED to FIND a CHEAP hotel.
+She LEFT her KEYS on the TRAIN.
+I ORDERED the SOUP and a SALAD.
+They MOVED to a HOUSE near SCHOOL.
+Can you CALL me AFTER LUNCH?
+The MEETING starts at HALF past NINE.
+He DROVE through the RAIN all NIGHT.
+I REALLY LIKE your NEW idea.
+I got it at the market.
+Put it on the table.
+What are you doing?
+We need a lot of water.
+She wrote it in a letter.
+Get out of the car.
+I bought a better computer.
+He waited at the station.
+That is a beautiful city.
+I met her at a party.
+I went there last night.
+The next day was sunny.
+She held my hand.
+He left the door open.
+We must go now.
+I do not know the answer.
+She asked me twice.
+It was the best movie.
+They found the old man.
+I kept the first prize.
+Did you call me?
+Would you like some tea?
+Don't you know her?
+Could you open the door?
+I miss you already.
+Bless you.
+As you know, we are ready.
+This year went quickly.
+Ten boys joined the team.
+Green paper is on the desk.
+I am going to call you.
+Do you want to come?
+I have to leave now.
+Let me check it.
+Give me a minute.
+I have got to go.
+You should have told me.
+I could have helped you.
+What are you doing?
+It is kind of strange.
+</SPOKEN_TEXT>

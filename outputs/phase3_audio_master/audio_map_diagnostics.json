@@ -1,0 +1,20 @@
+[
+  {
+    "file": "audio/Phase3-1.wav",
+    "expectedQuestions": 40,
+    "detectedSegments": 41,
+    "note": "one-to-one; trailing segment 41 overlaps with the next master file"
+  },
+  {
+    "file": "audio/Phase3-2.wav",
+    "expectedQuestions": 38,
+    "detectedSegments": 38,
+    "note": "one-to-one"
+  },
+  {
+    "file": "audio/Phase3-3.wav",
+    "expectedQuestions": 12,
+    "detectedSegments": 12,
+    "note": "one-to-one"
+  }
+]

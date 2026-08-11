@@ -1,0 +1,91 @@
+LINE	ID	CATEGORY	SENTENCE
+01	P301-01	P301	Pick it up before you leave.
+02	P301-02	P301	Turn it off when you finish.
+03	P301-03	P301	Take it out of the box.
+04	P301-04	P301	Put it on the table.
+05	P301-05	P301	Read it aloud for us.
+06	P301-06	P301	Send it over tonight.
+07	P301-07	P301	Leave it at the desk.
+08	P301-08	P301	Check it again tomorrow.
+09	P301-09	P301	Hold on a minute.
+10	P301-10	P301	Come in and sit down.
+11	P302-01	P302	Go out and get some air.
+12	P302-02	P302	Do it again for me.
+13	P302-03	P302	I agree with your idea.
+14	P302-04	P302	We asked for some help.
+15	P302-05	P302	See it for yourself.
+16	P302-06	P302	She always arrives early.
+17	P302-07	P302	Go over the details.
+18	P302-08	P302	Who is at the door?
+19	P302-09	P302	They are already here.
+20	P302-10	P302	Try it one more time.
+21	P303-01	P303	The big game starts tonight.
+22	P303-02	P303	We had two good days.
+23	P303-03	P303	Take care on the stairs.
+24	P303-04	P303	Keep practicing every day.
+25	P303-05	P303	The red door is open.
+26	P303-06	P303	Stop playing with that.
+27	P303-07	P303	A black cat crossed the road.
+28	P303-08	P303	This bus stop is crowded.
+29	P303-09	P303	She felt tired today.
+30	P303-10	P303	The top player scored again.
+31	P304-01	P304	Tell him about the meeting.
+32	P304-02	P304	I saw her at the station.
+33	P304-03	P304	That is his new car.
+34	P304-04	P304	Give them a few minutes.
+35	P304-05	P304	We are going to the store.
+36	P304-06	P304	This gift is for my sister.
+37	P304-07	P304	I need a cup of coffee.
+38	P304-08	P304	Meet me at the entrance.
+39	P304-09	P304	She came from the office.
+40	P304-10	P304	Bread and butter, please.
+41	P305-01	P305	The CHILD bought a NEW red BIKE.
+42	P305-02	P305	Please SEND me the FILE by FOUR.
+43	P305-03	P305	We NEED to FIND a CHEAP hotel.
+44	P305-04	P305	She LEFT her KEYS on the TRAIN.
+45	P305-05	P305	I ORDERED the SOUP and a SALAD.
+46	P305-06	P305	They MOVED to a HOUSE near SCHOOL.
+47	P305-07	P305	Can you CALL me AFTER LUNCH?
+48	P305-08	P305	The MEETING starts at HALF past NINE.
+49	P305-09	P305	He DROVE through the RAIN all NIGHT.
+50	P305-10	P305	I REALLY LIKE your NEW idea.
+51	P306-01	P306	I got it at the market.
+52	P306-02	P306	Put it on the table.
+53	P306-03	P306	What are you doing?
+54	P306-04	P306	We need a lot of water.
+55	P306-05	P306	She wrote it in a letter.
+56	P306-06	P306	Get out of the car.
+57	P306-07	P306	I bought a better computer.
+58	P306-08	P306	He waited at the station.
+59	P306-09	P306	That is a beautiful city.
+60	P306-10	P306	I met her at a party.
+61	P307-01	P307	I went there last night.
+62	P307-02	P307	The next day was sunny.
+63	P307-03	P307	She held my hand.
+64	P307-04	P307	He left the door open.
+65	P307-05	P307	We must go now.
+66	P307-06	P307	I do not know the answer.
+67	P307-07	P307	She asked me twice.
+68	P307-08	P307	It was the best movie.
+69	P307-09	P307	They found the old man.
+70	P307-10	P307	I kept the first prize.
+71	P308-01	P308	Did you call me?
+72	P308-02	P308	Would you like some tea?
+73	P308-03	P308	Don't you know her?
+74	P308-04	P308	Could you open the door?
+75	P308-05	P308	I miss you already.
+76	P308-06	P308	Bless you.
+77	P308-07	P308	As you know, we are ready.
+78	P308-08	P308	This year went quickly.
+79	P308-09	P308	Ten boys joined the team.
+80	P308-10	P308	Green paper is on the desk.
+81	P309-01	P309	I am going to call you.
+82	P309-02	P309	Do you want to come?
+83	P309-03	P309	I have to leave now.
+84	P309-04	P309	Let me check it.
+85	P309-05	P309	Give me a minute.
+86	P309-06	P309	I have got to go.
+87	P309-07	P309	You should have told me.
+88	P309-08	P309	I could have helped you.
+89	P309-09	P309	What are you doing?
+90	P309-10	P309	It is kind of strange.
