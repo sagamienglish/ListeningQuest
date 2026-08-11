@@ -10,6 +10,8 @@ const execFileAsync = promisify(execFile);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const voice = process.env.LISTENQUEST_VOICE || "Ava (Premium)";
 const rate = process.env.LISTENQUEST_RATE || "155";
+const categoryFilter = process.env.LISTENQUEST_CATEGORY || "";
+const overwriteExisting = process.env.LISTENQUEST_OVERWRITE === "1";
 const sentenceFrames = [
   (word) => `Please say ${word} again.`,
   (word) => `I heard the word ${word} clearly.`,
@@ -56,14 +58,15 @@ let processed = 0;
 try {
   const jobs = [];
   for (const pair of pairs) {
+    if (categoryFilter && pair.categoryId !== categoryFilter) continue;
     const phase = categories.find((category) => category.id === pair.categoryId)?.phase;
     const outputDirectory = path.join(root, `audio/phase${phase}`);
     await fs.mkdir(outputDirectory, { recursive: true });
     for (const key of ["a", "b"]) {
       const base = baseName(pair, key);
       const word = pair[key].word;
-      jobs.push({ text: word, output: path.join(outputDirectory, `${base}-word.wav`) });
-      jobs.push({ text: sentenceFor(pair, word), output: path.join(outputDirectory, `${base}-sentence.wav`), overwrite: sentenceFrameIndex(pair) === 1 });
+      jobs.push({ text: word, output: path.join(outputDirectory, `${base}-word.wav`), overwrite: overwriteExisting });
+      jobs.push({ text: sentenceFor(pair, word), output: path.join(outputDirectory, `${base}-sentence.wav`), overwrite: overwriteExisting });
     }
   }
   let cursor = 0;

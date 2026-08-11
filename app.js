@@ -1,4 +1,4 @@
-import { categories, pairs } from "./data.js";
+import { categories, pairs } from "./data.js?v=20260811-5";
 import { phase3Categories, phase3Questions } from "./phase3-data.js";
 import { phase3AudioMap } from "./phase3-audio-map.js";
 
@@ -7,6 +7,7 @@ const toast = document.querySelector("#toast");
 const STORAGE_KEY = "listeningquest-progress-v3";
 const V2_STORAGE_KEY = "listenquest-progress-v2";
 const V1_STORAGE_KEY = "listenquest-progress-v1";
+const CATEGORY_CONTENT_REVISIONS = { C16: "hard-heard-v1" };
 const sessionSize = 5;
 const sentenceFrames = [
   (word) => `Please say ${word} again.`,
@@ -50,6 +51,7 @@ function categoryById(categoryId) {
 const state = {
   view: "home",
   homeMode: "training",
+  trainingMenuOpen: false,
   phase: 1,
   mode: "random",
   category: null,
@@ -85,6 +87,7 @@ function emptyProgress() {
     overallRating: 1000,
     overallRatingHistory: [1000],
     mistakes: [],
+    categoryContentRevisions: { ...CATEGORY_CONTENT_REVISIONS },
     totalCorrect: 0,
     totalQuestions: 0,
     categories: {},
@@ -136,12 +139,22 @@ function loadProgress() {
         ? saved.overallRatingHistory.map(Number).filter(Number.isFinite).slice(-30)
         : [saved.overallRating];
       saved.mistakes = Array.isArray(saved.mistakes) ? saved.mistakes.slice(-40) : [];
+      saved.categoryContentRevisions ||= {};
+      let contentChanged = false;
+      Object.entries(CATEGORY_CONTENT_REVISIONS).forEach(([categoryId, revision]) => {
+        if (saved.categoryContentRevisions[categoryId] === revision) return;
+        delete saved.categories[categoryId];
+        saved.mistakes = saved.mistakes.filter((mistake) => mistake.categoryId !== categoryId);
+        saved.categoryContentRevisions[categoryId] = revision;
+        contentChanged = true;
+      });
       saved.ratingHistory ||= {};
       [1, 2, 3].forEach((phase) => {
         const current = Number(saved.phaseRatings[phase]) || 1000;
         const history = Array.isArray(saved.ratingHistory[phase]) ? saved.ratingHistory[phase] : [];
         saved.ratingHistory[phase] = history.length ? history.map((item) => Number(item?.value ?? item) || current).slice(-30) : [current];
       });
+      if (contentChanged) localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
       return saved;
     }
   } catch {
@@ -326,6 +339,10 @@ function primaryModesMarkup(progress) {
   return `<nav class="learning-mode-nav" aria-label="学習モード"><button class="learning-mode-button is-training ${mode === "training" ? "is-active" : ""}" type="button" data-home-mode="training" aria-current="${mode === "training" ? "page" : "false"}"><span>▶</span><small>LEARN</small><strong>音声トレーニング</strong></button><button class="learning-mode-button is-assessment ${mode === "assessment" ? "is-active" : ""}" type="button" data-home-mode="assessment" aria-current="${mode === "assessment" ? "page" : "false"}"><span>★</span><small>ALL PHASES · LEVEL ${levelFromRating(overallRating)}</small><strong>総合レベルテスト</strong></button><button class="learning-mode-button is-weakness ${mode === "weakness" ? "is-active" : ""}" type="button" data-home-mode="weakness" aria-current="${mode === "weakness" ? "page" : "false"}"><span>↻</span><small>${mistakeCount ? `${mistakeCount}問を保存中` : "誤答なし"}</small><strong>苦手リトライ</strong></button></nav>`;
 }
 
+function trainingContextMarkup() {
+  return `<section class="training-context-bar" aria-label="音声トレーニングの現在位置"><span>▶</span><div><small>LISTENING TRAINING</small><strong>音声トレーニング <i>›</i> <em>Phaseを選択</em></strong></div><button type="button" data-training-overview="true">概要へ戻る</button></section>`;
+}
+
 function phaseCourseSelectorMarkup(activePhase) {
   return `<div class="phase-course-grid" role="group" aria-label="学習コース">${[1, 2, 3].map((phase) => `<article class="phase-launch-card ${activePhase === phase ? "is-active" : ""}"><button class="phase-course-button" type="button" data-phase="${phase}" aria-pressed="${activePhase === phase}"><strong>Phase ${phase}</strong></button><button class="phase-inline-start" type="button" ${phase === 3 ? `data-phase3-random="true"` : `data-random="${phase}"`}><span>▶</span><strong>ランダム5題</strong><i>→</i></button></article>`).join("")}</div>`;
 }
@@ -457,13 +474,15 @@ function render() {
 
 function renderHome() {
   const progress = loadProgress();
+  if (state.homeMode === "training" && !state.trainingMenuOpen) return renderModeHome(progress);
   if (state.homeMode !== "training") return renderModeHome(progress);
   if (state.phase === 3) return renderPhase3Home(progress);
   const phaseCategories = categories.filter((category) => category.phase === state.phase);
 
   app.innerHTML = `
-    <section class="dashboard-shell" aria-label="音声トレーニング">
+    <section class="dashboard-shell training-dashboard-shell" aria-label="音声トレーニング">
       ${primaryModesMarkup(progress)}
+      ${trainingContextMarkup()}
       ${phaseCourseSelectorMarkup(state.phase)}
       <div class="category-section-title"><span>カテゴリー</span>${focusItemsMarkup(progress, phaseCategories)}</div>
       <div class="category-grid">
@@ -473,36 +492,39 @@ function renderHome() {
 }
 
 function renderModeHome(progress) {
+  const isTraining = state.homeMode === "training";
   const isAssessment = state.homeMode === "assessment";
   const rating = Number(progress.overallRating) || 1000;
+  const phaseRating = Number(progress.phaseRatings?.[state.phase]) || 1000;
   const mistakes = progress.mistakes || [];
   const attempted = Number(progress.totalQuestions) || 0;
   const accuracy = attempted ? Math.round(((Number(progress.totalCorrect) || 0) / attempted) * 100) : 0;
   const mistakeCategories = [...new Set(mistakes.map((item) => item.categoryId))].map((id) => categoryById(id)).filter(Boolean).slice(0, 5);
-  const title = isAssessment ? "総合レベルテスト" : "苦手リトライ";
-  const eyebrow = isAssessment ? "ALL PHASES ASSESSMENT" : "WEAK POINT REVIEW";
-  const description = isAssessment ? "Phase 1〜3から5題を出題。正答率と回答速度から総合レベルを判定します。" : "保存された誤答から最大5題を再出題。苦手な音を集中して聞き直します。";
+  const title = isTraining ? "音声トレーニング" : isAssessment ? "総合レベルテスト" : "苦手リトライ";
+  const eyebrow = isTraining ? "LISTENING TRAINING" : isAssessment ? "ALL PHASES ASSESSMENT" : "WEAK POINT REVIEW";
+  const description = isTraining ? "Phaseを選び、ランダム5題またはカテゴリー別の個別練習に進みます。" : isAssessment ? "Phase 1〜3から5題を出題。正答率と回答速度から総合レベルを判定します。" : "保存された誤答から最大5題を再出題。苦手な音を集中して聞き直します。";
   app.innerHTML = `
     <section class="dashboard-shell mode-home-shell" aria-labelledby="mode-home-title">
       ${primaryModesMarkup(progress)}
-      <div class="mode-preview-panel ${isAssessment ? "is-assessment" : "is-weakness"}">
+      <div class="mode-preview-panel ${isTraining ? "is-training" : isAssessment ? "is-assessment" : "is-weakness"}">
         <div class="mode-preview-heading"><p class="eyebrow">${eyebrow}</p><h1 id="mode-home-title">${title}</h1><p>${description}</p></div>
         <div class="mode-progress-card">
           <span>学習進捗</span>
-          ${isAssessment ? levelProgressMarkup(rating, rating) : `<div class="weakness-count"><strong>${mistakes.length}</strong><small>問を復習リストに保存</small></div>`}
+          ${isTraining ? levelProgressMarkup(phaseRating, phaseRating) : isAssessment ? levelProgressMarkup(rating, rating) : `<div class="weakness-count"><strong>${mistakes.length}</strong><small>問を復習リストに保存</small></div>`}
         </div>
         <div class="mode-stat-grid">
-          ${isAssessment ? `<div><small>OVERALL RATE</small><strong>${rating}</strong></div><div><small>ANSWERED</small><strong>${attempted}</strong></div><div><small>ACCURACY</small><strong>${accuracy}%</strong></div>` : `<div><small>SAVED</small><strong>${mistakes.length}問</strong></div><div class="mode-focus-list"><small>重点カテゴリー</small><strong>${mistakeCategories.length ? mistakeCategories.map((category) => category.name).join(" · ") : "誤答後に表示"}</strong></div>`}
+          ${isTraining ? `<div><small>COURSES</small><strong>3 Phase</strong></div><div><small>CATEGORIES</small><strong>${categories.length + phase3Categories.length}</strong></div><div><small>CURRENT</small><strong>Phase ${state.phase}</strong></div>` : isAssessment ? `<div><small>OVERALL RATE</small><strong>${rating}</strong></div><div><small>ANSWERED</small><strong>${attempted}</strong></div><div><small>ACCURACY</small><strong>${accuracy}%</strong></div>` : `<div><small>SAVED</small><strong>${mistakes.length}問</strong></div><div class="mode-focus-list"><small>重点カテゴリー</small><strong>${mistakeCategories.length ? mistakeCategories.map((category) => category.name).join(" · ") : "誤答後に表示"}</strong></div>`}
         </div>
-        <button class="mode-start-button" type="button" ${isAssessment ? `data-assessment="true"` : `data-weakness="true" ${mistakes.length ? "" : "disabled"}`}><span>${isAssessment ? "★" : "↻"}</span><small>${isAssessment ? "5 QUESTIONS · ALL PHASES" : `${mistakes.length} QUESTIONS · REVIEW`}</small><strong>${title}を始める</strong><i>→</i></button>
+        <button class="mode-start-button" type="button" ${isTraining ? `data-open-training="true"` : isAssessment ? `data-assessment="true"` : `data-weakness="true" ${mistakes.length ? "" : "disabled"}`}><span>${isTraining ? "▶" : isAssessment ? "★" : "↻"}</span><small>${isTraining ? "3 PHASES · CATEGORY TRAINING" : isAssessment ? "5 QUESTIONS · ALL PHASES" : `${mistakes.length} QUESTIONS · REVIEW`}</small><strong>${title}を始める</strong><i>→</i></button>
       </div>
     </section>`;
 }
 
 function renderPhase3Home(progress = loadProgress()) {
   app.innerHTML = `
-    <section class="dashboard-shell phase3-shell" aria-label="音声トレーニング Phase 3">
+    <section class="dashboard-shell phase3-shell training-dashboard-shell" aria-label="音声トレーニング Phase 3">
       ${primaryModesMarkup(progress)}
+      ${trainingContextMarkup()}
       ${phaseCourseSelectorMarkup(3)}
       <div class="category-section-title"><span>カテゴリー</span>${focusItemsMarkup(progress, phase3Categories)}</div>
       <div class="phase3-grid">
@@ -1555,6 +1577,15 @@ function showToast(message) {
   toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 2400);
 }
 
+function openTrainingDashboard() {
+  const panel = document.querySelector(".mode-preview-panel.is-training");
+  panel?.classList.add("is-leaving");
+  window.setTimeout(() => {
+    state.trainingMenuOpen = true;
+    renderHome();
+  }, panel ? 260 : 0);
+}
+
 function goHome() {
   state.view = "home";
   state.category = null;
@@ -1584,7 +1615,13 @@ document.addEventListener("click", (event) => {
   }
   const target = event.target.closest("button");
   if (!target) return;
-  if (target.dataset.homeMode) { state.homeMode = target.dataset.homeMode; renderHome(); }
+  if (target.dataset.homeMode) {
+    state.homeMode = target.dataset.homeMode;
+    if (state.homeMode === "training") state.trainingMenuOpen = false;
+    renderHome();
+  }
+  if (target.dataset.openTraining) openTrainingDashboard();
+  if (target.dataset.trainingOverview) { state.trainingMenuOpen = false; renderHome(); }
   if (target.dataset.assessment) beginAssessment();
   if (target.dataset.weakness) beginWeaknessSession();
   if (target.dataset.batchPlay !== undefined) playBatchQuestion(Number(target.dataset.batchPlay));
